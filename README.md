@@ -5,9 +5,12 @@ to use [Prefect 2.0](https://prefect.io) for workflows and tasks.
 
 ## Project structure
 
-This Django application is laid out as a top-level folder
-containing the `myapi` package, which is the root of the Django
-application.
+The repository is laid out as a top-level folder
+containing the root of the  `myapi` Django application.
+
+In the usual fashion, the application contains an app for
+the site, named `myapi`. The `workflows` app contains
+Prefect flows.
 
 ```
 .
@@ -48,9 +51,9 @@ views.
 ## Setup
 
 Django applications do not normally have to be installed into a Python
-environment. However, the Prefect agent needs access to your workflow code
-on the Python path. The most straightforward way to ensure that this is the
-case is to install the Django application.
+environment. However, the Prefect flow in this example needs access to
+your Django code on the Python path. The most straightforward way to
+ensure that this is the case is to install the Django application.
 
 NOTE: This README assumes that you have created a Python environment for
 this example, using virtualenv, Conda, or another tool of your choice, and
@@ -79,10 +82,10 @@ runs any Prefect CLI command. For consistency, this README will use the
 
 Run the server like this:
 
-./manage.py prefectcli orion start     
+./manage.py prefectcli orion start
 In yet another terminal, start the Django API:
 
-./manage.py runserver  
+./manage.py runserver
 OK! Don't try to use the API yet. Before we do that, we're going to create a
 Deployment for the example flow.
 
@@ -163,6 +166,7 @@ Hello! andrew
 00:43:41.772 | INFO    | Flow run 'conscious-tuna' - Finished in state Completed()
 [14/Oct/2022 00:43:41] "GET /run_flow_immediately HTTP/1.1" 200 0
 ```
+
 What happened? Your flow ran in the server process. It finished, and then
 Django returned an HTTP response.
 
@@ -190,7 +194,7 @@ def schedule_flow_run(request):
     """
     Once a deployment exists for your flow, you can use `run_deployment()` to
     schedule a flow run.
-    
+  
     By default, `run_deployment()` will wait for the flow run to complete
     before returning. However, if you set `timeout=0`, the function returns
     immediately: the Django web request continues, and sometime later, your
@@ -225,6 +229,6 @@ Agent started! Looking for work from queue(s): default...
 00:48:24.331 | INFO    | Flow run 'grumpy-lemur' - Finished in state Completed()
 Hello! andrew
 00:48:26.706 | INFO    | prefect.infrastructure.process - Process 'grumpy-lemur' exited cleanly.
-
 ```
-That's your Prefect flow running in the agent process -- not in your web request!
+
+That's your Prefect flow running in the agent process -- not in your web request! Just the way it should be. 😎

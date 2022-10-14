@@ -3,7 +3,7 @@
 ###
 name: test-flow
 description: null
-version: 4b675a1428ea6187e611b0d40af4b261
+version: 69c5cb39a8f01265d247814d3b6fd191
 # The work queue that will handle this deployment's runs
 work_queue_name: default
 tags: []
@@ -26,7 +26,7 @@ infrastructure:
 flow_name: test-flow
 manifest_path: null
 storage: null
-path: /Users/andrew/src/django-prefect/myapi/workflows
+path: /Users/andrew/src/django-prefect/workflows
 entrypoint: test_flow.py:test_flow
 parameter_openapi_schema:
   title: Parameters

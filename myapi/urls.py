@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from myapi.views import create_flow_run
+from myapi.views import schedule_flow_run, run_flow_immediately
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("create_flow_run", create_flow_run)
+    path("run_flow_immediately", run_flow_immediately),
+    path("schedule_flow_run", schedule_flow_run)
 ]

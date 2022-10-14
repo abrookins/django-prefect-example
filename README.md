@@ -51,9 +51,9 @@ views.
 ## Setup
 
 Django applications do not normally have to be installed into a Python
-environment. However, the Prefect agent needs access to your workflow code
-on the Python path. The most straightforward way to ensure that this is the
-case is to install the Django application.
+environment. However, the Prefect flow in this example needs access to
+your Django code on the Python path. The most straightforward way to 
+ensure that this is the case is to install the Django application.
 
 NOTE: This README assumes that you have created a Python environment for
 this example, using virtualenv, Conda, or another tool of your choice, and

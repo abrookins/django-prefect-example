@@ -1,4 +1,4 @@
-# Example of how to use Prefect with Django
+# Using Prefect with Django
 
 This project contains an example Django application configured
 to use [Prefect 2.0](https://prefect.io) for workflows and tasks.

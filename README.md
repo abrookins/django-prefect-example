@@ -59,54 +59,49 @@ does not include instructions on how to do so.
 In the project's root directory, run the following  `pip install` command
 to install the Django application in editable mode:
 
-    pip install -e .
-
+pip install -e .
 This installs the two Django "apps" in the project, `myapi` and `workflows`,
 into your Python environment. It also installs the project's dependencies.
 
 Next, **set up Django**. This example assumes you are familiar with the setup
 that Django requires, like running initial migrations and creating a superuser.
 
-**NOTE**: You will need at least one user in your database for this example to 
+**NOTE**: You will need at least one user in your database for this example to
 work!
 
 ## Run Prefect and Django
 
 For this example, you should have a Prefect API server running.
 
-NOTE: This example project includes a management command, `prefectcli`, that 
+NOTE: This example project includes a management command, `prefectcli`, that
 runs any Prefect CLI command. For consistency, this README will use the
 `prefectcli` wrapper for all Prefect commands.
 
 Run the server like this:
 
-    ./manage.py prefectcli orion start       
-
+./manage.py prefectcli orion start     
 In yet another terminal, start the Django API:
 
-    ./manage.py runserver    
-
+./manage.py runserver  
 OK! Don't try to use the API yet. Before we do that, we're going to create a
 Deployment for the example flow.
 
 ## Create a Deployment
 
 This example includes an example Deployment YAML file in
-`workflows/test_flow-deployment.yaml`, but this is just so you can see a working
+`workflows/example-deployment.yaml`, but this is just so you can see a working
 file. **You will need to build your own Deployment YAML for this example.**
 
-You can build a Deployment YAML by running the following command from the root
-of the project:
+You should build your own Deployment YAML by running the following command
+from the root of the project:
 
-    ./manage.py prefectcli deployment build workflows/test_flow.py:test_flow --name test-flow
-
-The output should be a YAML file. You can check it out if you want, but you
-can also just apply it -- this sets up your new Deployment in the Prefect
+./manage.py prefectcli deployment build workflows/test_flow.py:test_flow --name test-flow
+The output will be a YAML file. You can check it out if you want, but you
+can also just _apply_ it -- this sets up your new Deployment in the Prefect
 API:
 
-    ./manage.py prefectcli deployment apply test_flow-deployment.yaml
-
-NOTE: Remember to apply **your** YAML file -- the YAML file that you just 
+./manage.py prefectcli deployment apply test_flow-deployment.yaml
+NOTE: Remember to apply **your** YAML file -- the YAML file that you just
 built with the `build` command, not the example YAML file.
 
 ## Start the Prefect Agent
@@ -116,20 +111,49 @@ start the Prefect Agent.
 
 In a new terminal, run the following command:
 
-    ./manage.py prefectcli agent start -q default
-
+./manage.py prefectcli agent start -q default
 You should now have three processes running:
-- Django's server
+
+- The Django development server
 - The Prefect API
 - The Prefect agent
 
-NOW, you're ready to schedule a flow run...
+Now, you're ready to run some flows!
 
-## Schedule a flow run
+## Running flow immediately
 
-### Run a flow immediately
+You can run a Prefect flow immediately by calling it. Let's see how this works
+from a Django view.
 
-Open a browser and visit: http://localhost:8000/run_flow_immediately
+### The code
+
+If you look in the file `myapi/views.py`, you'll see the following Django view:
+
+```python
+from django.http import HttpResponse
+
+from workflows.test_flow import test_flow
+
+
+def run_flow_immediately(request):
+    """
+    Calling a flow runs it in the current Python process, which may not be what
+    you want during a web request but is still possible.
+    """
+    test_flow()
+    return HttpResponse(status=200)
+```
+
+This view imports the Prefect flow `test_flow` and calls it. Doing so runs the
+flow immediately in the current Python process, which means that the flow will
+run to completion before the Django view returns an HTTP response.
+
+### Seeing it work
+
+To see how this works, open a browser and visit: http://localhost:8000/run_flow_immediately
+
+**NOTE**: You should still have the processes we started earlier running,
+e.g. the Django development server, Prefect API, and Prefect agent.
 
 Now check your Django server output. You should see something like this:
 
@@ -139,19 +163,47 @@ Hello! andrew
 00:43:41.772 | INFO    | Flow run 'conscious-tuna' - Finished in state Completed()
 [14/Oct/2022 00:43:41] "GET /run_flow_immediately HTTP/1.1" 200 0
 ```
+What happened? Your flow ran in the server process. It finished, and then
+Django returned an HTTP response.
 
-What happened? Your flow run in the server process. It finished, and then
-Django returned an HTTP response. Check the docstrings for this view -- you
-can run flows like this, but you may not want to in a Django web request.
-
-### Schedule a flow run
+## Scheduling a flow run
 
 What you _probably_ want to do in a web request is schedule a flow to run
 "at some time" and return an HTTP response to the user without waiting for
-the flow run to complete.
+the flow run to complete. Let's see how to do that from a Django view.
 
-You can do that using the `run_deployment()` helper. That's exactly what will
-happen if you visit the following URL: http://localhost:8000/schedule_flow_run
+### The code
+
+You can schedule a flow to run outside the current Python process using
+a Deployment. Once you've created a deployment for your flow, you can use
+the `run_deployment()` helper to schedule a flow run.
+
+Once again in the `myapi/views.py` file, you'll see the following Django view:
+
+```python
+from django.http import HttpResponse
+
+from prefect.deployments import run_deployment
+
+
+def schedule_flow_run(request):
+    """
+    Once a deployment exists for your flow, you can use `run_deployment()` to
+    schedule a flow run.
+    
+    By default, `run_deployment()` will wait for the flow run to complete
+    before returning. However, if you set `timeout=0`, the function returns
+    immediately: the Django web request continues, and sometime later, your
+    Prefect agent process will run the flow.
+    """
+    run_deployment('test-flow/test-flow', timeout=0)
+    return HttpResponse(status=200)
+```
+
+### Seeing it work
+
+That's exactly what will happen if you visit
+the following URL: http://localhost:8000/schedule_flow_run
 
 If you check out the console output for your running Prefect agent, you should
 see something like this:
@@ -175,5 +227,4 @@ Hello! andrew
 00:48:26.706 | INFO    | prefect.infrastructure.process - Process 'grumpy-lemur' exited cleanly.
 
 ```
-
 That's your Prefect flow running in the agent process -- not in your web request!

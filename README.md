@@ -143,7 +143,7 @@ Hello! andrew
 [14/Oct/2022 00:43:41] "GET /run_flow_immediately HTTP/1.1" 200 0
 ```
 
-What happened? Your flow run in the server process. It finished, and then
+What happened? Your flow ran in the server process. It finished, and then
 Django returned an HTTP response. Check the docstrings for this view -- you
 can run flows like this, but you may not want to in a Django web request.
 

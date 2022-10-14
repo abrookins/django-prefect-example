@@ -1,0 +1,36 @@
+###
+### A complete description of a Prefect Deployment for flow 'test-flow'
+###
+name: test-flow
+description: null
+version: 4b675a1428ea6187e611b0d40af4b261
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: test-flow
+manifest_path: null
+storage: null
+path: /Users/andrew/src/django-prefect/myapi/workflows
+entrypoint: test_flow.py:test_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties: {}
+  required: null
+  definitions: null

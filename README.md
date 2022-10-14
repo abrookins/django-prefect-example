@@ -41,6 +41,10 @@ The important parts for our consideration are:
 - A Django management command for running Prefect CLI commands within a Django environment: `myapi/workflows/management/commands/prefectcli.py`
 - Django views that demonstrate how to run the flow: `myapi/myapi/views.py`
 
+You can read these files in depth to see how they work. This README will
+walk you through _using_ the bundled management command and example Django
+views.
+
 ## Setup
 
 Django applications do not normally have to be installed into a Python

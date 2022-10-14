@@ -9,7 +9,7 @@ The repository is laid out as a top-level folder
 containing the root of the  `myapi` Django application.
 
 In the usual fashion, the application contains an app for
-the site, named "myapi." The "workflows" app contains
+the site, named `myapi`. The `workflows` app contains
 Prefect flows.
 
 ```

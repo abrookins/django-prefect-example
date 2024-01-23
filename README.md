@@ -62,7 +62,8 @@ does not include instructions on how to do so.
 In the project's root directory, run the following  `pip install` command
 to install the Django application in editable mode:
 
-pip install -e .
+    pip install -e .
+
 This installs the two Django "apps" in the project, `myapi` and `workflows`,
 into your Python environment. It also installs the project's dependencies.
 
@@ -82,10 +83,12 @@ runs any Prefect CLI command. For consistency, this README will use the
 
 Run the server like this:
 
-./manage.py prefectcli orion start
+    ./manage.py prefectcli orion start
+    
 In yet another terminal, start the Django API:
 
-./manage.py runserver
+    ./manage.py runserver
+
 OK! Don't try to use the API yet. Before we do that, we're going to create a
 Deployment for the example flow.
 
@@ -98,12 +101,14 @@ file. **You will need to build your own Deployment YAML for this example.**
 You should build your own Deployment YAML by running the following command
 from the root of the project:
 
-./manage.py prefectcli deployment build workflows/test_flow.py:test_flow --name test-flow
+    ./manage.py prefectcli deployment build workflows/test_flow.py:test_flow --name test-flow
+
 The output will be a YAML file. You can check it out if you want, but you
 can also just _apply_ it -- this sets up your new Deployment in the Prefect
 API:
 
-./manage.py prefectcli deployment apply test_flow-deployment.yaml
+    ./manage.py prefectcli deployment apply test_flow-deployment.yaml
+
 NOTE: Remember to apply **your** YAML file -- the YAML file that you just
 built with the `build` command, not the example YAML file.
 
@@ -114,7 +119,8 @@ start the Prefect Agent.
 
 In a new terminal, run the following command:
 
-./manage.py prefectcli agent start -q default
+    ./manage.py prefectcli agent start -q default
+
 You should now have three processes running:
 
 - The Django development server
